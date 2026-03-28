@@ -1,0 +1,50 @@
+!DOCTYPE html
+}
+
+function logout(){ location.reload(); }
+
+async function loadDashboard(){
+ const res = await fetch(API_URL);
+ const data = await res.json();
+
+ let sales=0, expense=0;
+ let monthly=0;
+
+ const currentMonth = new Date().getMonth();
+
+ data.daily.forEach(r={
+  sales += Number(r.sales);
+  monthly += (new Date(r.date).getMonth()===currentMonth) Number(r.profit)0;
+ });
+
+ data.expense.forEach(r={
+  expense += Number(r.amount);
+ });
+
+ document.getElementById(sales).innerText=sales;
+ document.getElementById(expense).innerText=expense;
+ document.getElementById(profit).innerText=sales-expense;
+ document.getElementById(bank).innerText=sales-expense;
+ document.getElementById(monthly).innerText=monthly;
+}
+
+async function submitData(){
+ const payload = {
+  type type.value,
+  date date.value,
+  amount amount.value,
+  note note.value
+ };
+
+ await fetch(API_URL, {
+  methodPOST,
+  body JSON.stringify(payload)
+ });
+
+ alert(Saved);
+ loadDashboard();
+}
+script
+
+body
+html
