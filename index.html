@@ -1,4 +1,64 @@
-!DOCTYPE html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Business Accounting Pro</title>
+<style>
+body { font-family: Arial; margin:0; background:#eef2f7; }
+.header { background:#0f172a; color:white; padding:15px; text-align:center; }
+.container { padding:15px; }
+.card { background:white; padding:15px; border-radius:10px; margin-bottom:10px; }
+input, button, select { padding:10px; margin:5px 0; width:100%; }
+button { background:#0f172a; color:white; border:none; border-radius:5px; }
+.hidden { display:none; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+</style>
+</head>
+<body>
+
+<div class="header">?? Business Accounting PRO</div>
+
+<div class="container" id="loginPage">
+<h3>????</h3>
+<input id="username">
+<input id="password" type="password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="container hidden" id="dashboard">
+
+<div class="card">?? Sales: <span id="sales">0</span></div>
+<div class="card">?? Expense: <span id="expense">0</span></div>
+<div class="card">?? Profit: <span id="profit">0</span></div>
+<div class="card">?? Bank: <span id="bank">0</span></div>
+<div class="card">?? Monthly Profit: <span id="monthly">0</span></div>
+
+<h3>?? Entry Type</h3>
+<select id="type">
+<option value="daily">Daily Entry</option>
+<option value="expense">Expense Entry</option>
+</select>
+
+<div class="grid">
+<input type="date" id="date">
+<input type="number" id="amount" placeholder="Amount">
+<input type="text" id="note" placeholder="Note">
+</div>
+
+<button onclick="submitData()">Save</button>
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwyLSQU3g259K8vZPBk2AP8z6tFXzUx6NnjjQ36Oum2fAGKHAk5lKgfqtTEyICW0VgSpg/exec";
+
+function login(){
+ if(username.value=="admin" && password.value=="1234"){
+  loginPage.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+  loadDashboard();
+ } else alert("Wrong login");
 }
 
 function logout(){ location.reload(); }
@@ -12,39 +72,5 @@ async function loadDashboard(){
 
  const currentMonth = new Date().getMonth();
 
- data.daily.forEach(r={
-  sales += Number(r.sales);
-  monthly += (new Date(r.date).getMonth()===currentMonth) Number(r.profit)0;
- });
-
- data.expense.forEach(r={
-  expense += Number(r.amount);
- });
-
- document.getElementById(sales).innerText=sales;
- document.getElementById(expense).innerText=expense;
- document.getElementById(profit).innerText=sales-expense;
- document.getElementById(bank).innerText=sales-expense;
- document.getElementById(monthly).innerText=monthly;
-}
-
-async function submitData(){
- const payload = {
-  type type.value,
-  date date.value,
-  amount amount.value,
-  note note.value
- };
-
- await fetch(API_URL, {
-  methodPOST,
-  body JSON.stringify(payload)
- });
-
- alert(Saved);
- loadDashboard();
-}
-script
-
-body
-html
+ data.daily.forEach(r=>{
+</html>
