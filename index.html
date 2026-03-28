@@ -2,24 +2,24 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<title>Business Accounting Pro</title>
+<title>Accounting ERP</title>
 <style>
-body { font-family: Arial; margin:0; background:#eef2f7; }
-.header { background:#0f172a; color:white; padding:15px; text-align:center; }
-.container { padding:15px; }
-.card { background:white; padding:15px; border-radius:10px; margin-bottom:10px; }
-input, button, select { padding:10px; margin:5px 0; width:100%; }
-button { background:#0f172a; color:white; border:none; border-radius:5px; }
-.hidden { display:none; }
-.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+body{font-family:Arial;margin:0;background:#f1f5f9}
+.header{background:#0f172a;color:#fff;padding:15px;text-align:center}
+.container{padding:15px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:10px}
+input,select,button{padding:10px;margin:5px 0;width:100%}
+button{background:#0f172a;color:#fff;border:none;border-radius:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hidden{display:none}
 </style>
 </head>
 <body>
 
-<div class="header">?? Business Accounting PRO</div>
+<div class="header">📊 Smart Business Accounting ERP</div>
 
 <div class="container" id="loginPage">
-<h3>????</h3>
+<h3>লগইন</h3>
 <input id="username">
 <input id="password" type="password">
 <button onclick="login()">Login</button>
@@ -27,22 +27,27 @@ button { background:#0f172a; color:white; border:none; border-radius:5px; }
 
 <div class="container hidden" id="dashboard">
 
-<div class="card">?? Sales: <span id="sales">0</span></div>
-<div class="card">?? Expense: <span id="expense">0</span></div>
-<div class="card">?? Profit: <span id="profit">0</span></div>
-<div class="card">?? Bank: <span id="bank">0</span></div>
-<div class="card">?? Monthly Profit: <span id="monthly">0</span></div>
+<div class="card">💰 Sales: <span id="sales">0</span></div>
+<div class="card">💸 Expense: <span id="expense">0</span></div>
+<div class="card">📈 Profit: <span id="profit">0</span></div>
+<div class="card">🏦 Bank: <span id="bank">0</span></div>
+<div class="card">📦 Courier Due: <span id="courier">0</span></div>
 
-<h3>?? Entry Type</h3>
+<h3>📥 Entry</h3>
 <select id="type">
-<option value="daily">Daily Entry</option>
-<option value="expense">Expense Entry</option>
+<option value="daily">Daily Sale</option>
+<option value="expense">Expense</option>
+<option value="courier">Courier</option>
 </select>
 
 <div class="grid">
 <input type="date" id="date">
-<input type="number" id="amount" placeholder="Amount">
-<input type="text" id="note" placeholder="Note">
+<input type="number" id="salesInput" placeholder="Sales">
+<input type="number" id="productCost" placeholder="Product Cost">
+<input type="number" id="adsCost" placeholder="Ads Cost">
+<input type="number" id="deliveryCost" placeholder="Delivery Cost">
+<input type="number" id="otherCost" placeholder="Other Cost">
+<input type="number" id="amount" placeholder="Expense / Courier Amount">
 </div>
 
 <button onclick="submitData()">Save</button>
@@ -51,26 +56,73 @@ button { background:#0f172a; color:white; border:none; border-radius:5px; }
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwyLSQU3g259K8vZPBk2AP8z6tFXzUx6NnjjQ36Oum2fAGKHAk5lKgfqtTEyICW0VgSpg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxv91O5OpQe2Xgy1vtaq90Kk2oWQ5kmsWX_8HNQPvHa3drN-OEygNUmD59f1BNTgbkldw/exec";
 
 function login(){
  if(username.value=="admin" && password.value=="1234"){
   loginPage.classList.add("hidden");
   dashboard.classList.remove("hidden");
-  loadDashboard();
+  loadData();
  } else alert("Wrong login");
 }
 
-function logout(){ location.reload(); }
+function logout(){location.reload()}
 
-async function loadDashboard(){
+async function loadData(){
  const res = await fetch(API_URL);
  const data = await res.json();
 
- let sales=0, expense=0;
- let monthly=0;
-
- const currentMonth = new Date().getMonth();
+ let sales=0, expense=0, courier=0;
 
  data.daily.forEach(r=>{
+  sales += Number(r.sales);
+  expense += Number(r.totalCost);
+ });
+
+ data.expense.forEach(r=>{
+  expense += Number(r.amount);
+ });
+
+ data.courier.forEach(r=>{
+  courier += Number(r.amount);
+ });
+
+ document.getElementById("sales").innerText=sales;
+ document.getElementById("expense").innerText=expense;
+ document.getElementById("profit").innerText=sales-expense;
+ document.getElementById("bank").innerText=sales-expense;
+ document.getElementById("courier").innerText=courier;
+}
+
+async function submitData(){
+ const type = document.getElementById("type").value;
+
+ let payload = {type:type,date:date.value};
+
+ if(type=="daily"){
+  const sales = Number(salesInput.value);
+  const cost = Number(productCost.value)+Number(adsCost.value)+Number(deliveryCost.value)+Number(otherCost.value);
+  const profit = sales - cost;
+
+  payload = {...payload,sales: sales,totalCost: cost,profit: profit};
+ }
+
+ if(type=="expense"){
+  payload = {...payload,amount: amount.value};
+ }
+
+ if(type=="courier"){
+  payload = {...payload,amount: amount.value};
+ }
+
+ await fetch(API_URL,{method:"POST",body:JSON.stringify(payload)});
+
+ alert("Saved");
+ loadData();
+}
+</script>
+
+</body>
 </html>
+
+
